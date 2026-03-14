@@ -1,40 +1,52 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card">
-    <h2>New Category</h2>
-    <form method="POST">
-        <div>
-            <label for="name">Category Name</label>
-            <input type="text" id="name" name="name" required>
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
+    
+    <div>
+        <div class="card">
+            <h2>➕ New Category</h2>
+            <form method="POST">
+                <div style="margin-bottom: 20px;">
+                    <label for="name">Category Name</label>
+                    <input type="text" id="name" name="name" required placeholder="e.g., Work, Personal">
+                </div>
+                <button type="submit" style="width: 100%;">Create Category</button>
+            </form>
         </div>
-        <button type="submit">Add Category</button>
-    </form>
-</div>
+    </div>
 
-<div class="card">
-    <h2>My Categories</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for category in categories %}
-            <tr>
-                <td>{{ category.name }}</td>
-                <td>
-                    <a href="{{ url_for('delete_category', id=category.id) }}" class="btn-small btn-danger" onclick="return confirm('Are you sure? This will not delete associated tasks.')">Delete</a>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="2">No categories found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div>
+        <div class="card">
+            <h2>📂 Manage Categories</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                        <tr>
+                            <td style="font-weight: 500;">{{ category.name }}</td>
+                            <td style="text-align: right;">
+                                <a href="{{ url_for('delete_category', id=category.id) }}" class="btn-small btn-danger" onclick="return confirm('Delete category {{ category.name }}? Tasks will be preserved but unassigned.')">🗑 Delete</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2" style="text-align: center; padding: 30px; color: var(--text-muted);">
+                                No categories created yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

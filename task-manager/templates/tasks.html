@@ -2,17 +2,13 @@
 
 {% block content %}
 <div class="card">
-    <h2>New Task</h2>
-    <form method="POST">
-        <div>
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" required>
+    <h2>➕ Add New Task</h2>
+    <form method="POST" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: end;">
+        <div style="grid-column: 1 / -1; margin-bottom: 0;">
+            <label for="title">Task Title</label>
+            <input type="text" id="title" name="title" required placeholder="What needs to be done?">
         </div>
-        <div>
-            <label for="description">Description</label>
-            <textarea id="description" name="description"></textarea>
-        </div>
-        <div>
+        <div style="margin-bottom: 0; grid-column: span 1;">
             <label for="category">Category</label>
             <select id="category" name="category_id">
                 <option value="">No Category</option>
@@ -21,44 +17,67 @@
                 {% endfor %}
             </select>
         </div>
-        <button type="submit">Add Task</button>
+        <div style="margin-bottom: 0; grid-column: span 1;">
+            <button type="submit" style="width: 100%;">Add Task</button>
+        </div>
+        <div style="grid-column: 1 / -1; margin-bottom: 0;">
+            <label for="description">Description (Optional)</label>
+            <textarea id="description" name="description" rows="2" placeholder="Add more details..."></textarea>
+        </div>
     </form>
 </div>
 
 <div class="card">
-    <h2>My Tasks</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Status</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for task in tasks %}
-            <tr class="{% if task.status == 'completed' %}status-completed{% endif %}">
-                <td>
-                    <a href="{{ url_for('complete_task', id=task.id) }}" class="btn-small">
-                        {{ 'Undo' if task.status == 'completed' else 'Done' }}
-                    </a>
-                </td>
-                <td>
-                    <strong>{{ task.title }}</strong><br>
-                    <small>{{ task.description }}</small>
-                </td>
-                <td>{{ task.category.name if task.category else '-' }}</td>
-                <td>
-                    <a href="{{ url_for('delete_task', id=task.id) }}" class="btn-small btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="4">No tasks found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 20px;">
+        <h2 style="border: none; margin: 0; padding: 0;">📝 My Tasks</h2>
+        <span style="background: #e3f2fd; color: #1976d2; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">{{ tasks|length }} Tasks</span>
+    </div>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Status</th>
+                    <th style="width: 45%;">Task Details</th>
+                    <th style="width: 20%;">Category</th>
+                    <th style="width: 20%; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr class="{% if task.status == 'completed' %}status-completed{% endif %}">
+                    <td>
+                        <a href="{{ url_for('complete_task', id=task.id) }}" class="btn-small btn-complete">
+                            {{ 'Undo' if task.status == 'completed' else '✓ Done' }}
+                        </a>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; font-size: 1.05rem;">{{ task.title }}</div>
+                        {% if task.description %}
+                        <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">{{ task.description }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.category %}
+                            <span style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: #555;">{{ task.category.name }}</span>
+                        {% else %}
+                            <span style="color: #ccc;">-</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <a href="{{ url_for('delete_task', id=task.id) }}" class="btn-small btn-danger" onclick="return confirm('Delete this task?')">🗑 Delete</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <p style="font-size: 1.2rem;">No tasks yet! 🎉</p>
+                        <p>Create your first task above to get started.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
